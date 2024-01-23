@@ -23,8 +23,8 @@
 </head>
 <body></body>
 <script>
-    const TRIALS_TYPE_REPS_TRAIN = 1 // 2  // number of times each trial type is shown in training
-    const TRIALS_TYPE_REPS = 1 // 12 // number of times each trial type is shown
+    const TRIALS_TYPE_REPS_TRAIN =  2  // number of times each trial type is shown in training
+    const TRIALS_TYPE_REPS = 12 // number of times each trial type is shown
     const DURATION_FIXATION = 400  // time the fixation cross is shown
     const DURATION_SOA = 200  // SOA after fixation
     const DURATION_TRIAL = 2000  // time the stimulus is shown
@@ -34,7 +34,31 @@
 
     jsPsych = initJsPsych({
             on_finish: function () {
-                jsPsych.data.get().filter({trial_type: 'rok'}).localSave('csv', 'experiment_data.csv');
+                let data = jsPsych.data.get()
+                    .filter({trial_type: 'rok', block_type: 'experimental'})
+                    .ignore(
+                        [
+                            'choices', 'correct_choice', 'trial_duration', 'response_ends_trial',
+                            'opposite_coherence_movement', 'opposite_coherence_orientation',
+                            'movement_speed', 'oob_size', 'oob_color',
+                            'movement_speed_randomisation', 'aperture_width',
+                            'aperture_height', 'background_color', 'aperture_background_color',
+                            'frame_rate', 'frame_rate_array', 'number_of_frames', 'stimulus_type',
+                            'aperture_shape', 'random_movemet_type', 'random_orientation_type',
+                            'number_of_apertures', 'density_unit_area', 'prompt',
+                            'aperture_position_left', 'aperture_position_top', 'aperture_mode',
+                            'block_type', 'trial_type',	'trial_index',	'time_elapsed',
+                            'internal_node_id', 'number_of_oobs', 'coherence_movement',
+                            'coherence_orientation'
+                        ]
+                        /*
+                        'rt', 'key_press', 'correct', 'task_type', 'task_transition',
+                        'congruency', 'coherent_movement_direction',
+                        'coherent_orientation', 'coherence_movement', 'coherence_orientation'
+                        */
+                    )
+                console.log(data)
+                data.localSave('csv', 'experiment_data.csv');
             }
         }
     )
@@ -110,9 +134,19 @@
         }
     )
 
-
+    let last_task = null
+    let task_transition = null
+    let congruency = null
     task_type_timeline_train.forEach((e) => {
         let task = e[0]
+        if (last_task === null) {
+            task_transition = null
+        } else if (last_task === task) {
+            task_transition = 'repetition'
+        } else {
+            task_transition = 'switch'
+        }
+        last_task = task
         let movement_string = e[1]
         let orientation_string = e[2]
         let movement_angle = 180
@@ -130,7 +164,11 @@
                 response_key = 'j'
             }
         }
-        console.log(task)
+        if (movement_angle === orientation_angle) {
+            congruency = 'congruent'
+        } else {
+            congruency = 'incongruent'
+        }
         timeline.push(
             {
                 type: jsPsychHtmlKeyboardResponse,
@@ -173,7 +211,12 @@
                 choices: ['f', 'j'],
                 correct_choice: [response_key],
                 trial_duration: DURATION_TRIAL,
-                data: {'block_type': 'training'}
+                data: {
+                    'block_type': 'training',
+                    'task_type': task,
+                    'task_transition': task_transition,
+                    'congruency': congruency
+                }
             }
         )
         timeline.push({
@@ -247,8 +290,19 @@
         }
     )
 
+    last_task = null
+    task_transition = null
+    congruency = null
     task_type_timeline.forEach((e) => {
         let task = e[0]
+        if (last_task === null) {
+            task_transition = null
+        } else if (last_task === task) {
+            task_transition = 'repetition'
+        } else {
+            task_transition = 'switch'
+        }
+        last_task = task
         let movement_string = e[1]
         let orientation_string = e[2]
         let movement_angle = 180
@@ -265,6 +319,11 @@
             if (task === 'or') {
                 response_key = 'j'
             }
+        }
+        if (movement_angle === orientation_angle) {
+            congruency = 'congruent'
+        } else {
+            congruency = 'incongruent'
         }
         timeline.push(
             {
@@ -306,7 +365,12 @@
                 choices: ['f', 'j'],
                 correct_choice: [response_key],
                 trial_duration: DURATION_TRIAL,
-                data: {'block_type': 'experimental'}
+                data: {
+                    'block_type': 'experimental',
+                    'task_type': task,
+                    'task_transition': task_transition,
+                    'congruency': congruency
+                }
             }
         )
         timeline.push(
