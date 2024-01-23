@@ -23,8 +23,8 @@
 </head>
 <body></body>
 <script>
-    const TRIALS_TYPE_REPS_TRAIN = 2  // number of times each trial type is shown in training
-    const TRIALS_TYPE_REPS = 12 // number of times each trial type is shown
+    const TRIALS_TYPE_REPS_TRAIN = 1 // 2  // number of times each trial type is shown in training
+    const TRIALS_TYPE_REPS = 1 // 12 // number of times each trial type is shown
     const DURATION_FIXATION = 400  // time the fixation cross is shown
     const DURATION_SOA = 200  // SOA after fixation
     const DURATION_TRIAL = 2000  // time the stimulus is shown
@@ -34,7 +34,7 @@
 
     jsPsych = initJsPsych({
             on_finish: function () {
-                jsPsych.data.get().filter({trial_type: 'iowaGambling'}).localSave('csv', 'experiment_data.csv');
+                jsPsych.data.get().filter({trial_type: 'rok'}).localSave('csv', 'experiment_data.csv');
             }
         }
     )
