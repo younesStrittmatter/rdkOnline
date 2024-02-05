@@ -173,9 +173,9 @@
             {
                 type: jsPsychHtmlKeyboardResponse,
                 stimulus: () => {
-                    let color = 'blue'
+                    let color = ORIENTATION_COLOR
                     if (task === 'mov') {
-                        color = 'yellow'
+                        color = MOVEMENT_COLOR
                     }
                     return `<div style="color: ${color}">+</div>`
                 },
@@ -329,9 +329,9 @@
             {
                 type: jsPsychHtmlKeyboardResponse,
                 stimulus: () => {
-                    let color = 'blue'
+                    let color = ORIENTATION_COLOR
                     if (task === 'mov') {
-                        color = 'yellow'
+                        color = MOVEMENT_COLOR
                     }
                     return `<div style="color: ${color}">+</div>`
                 },
